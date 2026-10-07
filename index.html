@@ -29,7 +29,13 @@
     defer
   ></script>
 
+  <!-- EmailJS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@emailjs/browser@5/dist/email.min.js"
+  ></script>
+
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -40,7 +46,6 @@
     :root {
       --background: #05070c;
       --panel: #10151f;
-      --panel-dark: #0b1018;
       --border: #2b3546;
       --text: #ffffff;
       --muted: #aab3c2;
@@ -109,36 +114,33 @@
     }
 
     .blue {
-      background:
-        linear-gradient(
-          145deg,
-          #07152f,
-          #0754ff
-        );
+      background: linear-gradient(
+        145deg,
+        #07152f,
+        #0754ff
+      );
 
       box-shadow:
         0 0 45px rgba(0, 90, 255, 0.25);
     }
 
     .green {
-      background:
-        linear-gradient(
-          145deg,
-          #061d12,
-          #009b4b
-        );
+      background: linear-gradient(
+        145deg,
+        #061d12,
+        #009b4b
+      );
 
       box-shadow:
         0 0 45px rgba(0, 255, 100, 0.18);
     }
 
     .orange {
-      background:
-        linear-gradient(
-          145deg,
-          #2a1602,
-          #f58b00
-        );
+      background: linear-gradient(
+        145deg,
+        #2a1602,
+        #f58b00
+      );
 
       box-shadow:
         0 0 45px rgba(255, 140, 0, 0.20);
@@ -182,6 +184,11 @@
 
     .danger-button {
       background: #911b22;
+      color: white;
+    }
+
+    .report-button {
+      background: #b82424;
       color: white;
     }
 
@@ -245,7 +252,7 @@
     }
 
     /* =========================
-       HOME LOGIN AREAS
+       AUTH AREAS
     ========================= */
 
     .auth-area {
@@ -291,11 +298,13 @@
     }
 
     /* =========================
-       LOGIN
+       INPUTS
     ========================= */
 
     input[type="email"],
-    input[type="password"] {
+    input[type="password"],
+    input[type="text"],
+    textarea {
       width: 100%;
 
       padding: 14px;
@@ -314,11 +323,18 @@
     }
 
     input[type="email"]:focus,
-    input[type="password"]:focus {
+    input[type="password"]:focus,
+    input[type="text"]:focus,
+    textarea:focus {
       border-color: #4a8cff;
 
       box-shadow:
         0 0 0 3px rgba(74, 140, 255, 0.1);
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
     }
 
     .stack {
@@ -377,10 +393,6 @@
 
       font-size: 13px;
       line-height: 1.5;
-    }
-
-    .standalone-message {
-      margin-top: 18px;
     }
 
     /* =========================
@@ -541,6 +553,26 @@
     }
 
     /* =========================
+       REPORT
+    ========================= */
+
+    .report-note {
+      padding: 12px;
+
+      margin-bottom: 12px;
+
+      border-radius: 10px;
+
+      background: #151c28;
+
+      color: #aeb8c8;
+
+      font-size: 13px;
+
+      line-height: 1.5;
+    }
+
+    /* =========================
        MODAL
     ========================= */
 
@@ -592,6 +624,7 @@
     ========================= */
 
     @media (max-width: 900px) {
+
       .home {
         grid-template-columns: 1fr;
       }
@@ -606,6 +639,7 @@
     }
 
     @media (max-width: 500px) {
+
       .screen {
         padding: 15px;
       }
@@ -622,6 +656,7 @@
         width: calc(100vw - 36px);
       }
     }
+
   </style>
 </head>
 
@@ -713,6 +748,7 @@
 
 
         <!-- LOGGED OUT -->
+
         <div
           id="homeLoggedOut"
           class="auth-area"
@@ -736,6 +772,7 @@
 
 
         <!-- LOGGED IN -->
+
         <div
           id="homeLoggedIn"
           class="auth-area hidden"
@@ -842,6 +879,13 @@
           ⚙️ Settings
         </button>
 
+        <button
+          class="report-button"
+          onclick="showScreen('report')"
+        >
+          🚨 Report a Problem
+        </button>
+
       </section>
 
     </div>
@@ -878,7 +922,7 @@
         </p>
 
 
-        <!-- EMAIL LOGIN -->
+        <!-- EMAIL -->
 
         <div class="stack">
 
@@ -909,15 +953,12 @@
         <div
           id="loginMessage"
           class="login-message"
-        >
-        </div>
+        ></div>
 
 
         <!-- WEBSITE SOCIAL LOGIN -->
 
-        <div
-          id="websiteSocialLogin"
-        >
+        <div id="websiteSocialLogin">
 
           <div class="divider">
             OR
@@ -939,8 +980,7 @@
           <div
             id="googleSignInButton"
             class="google-area"
-          >
-          </div>
+          ></div>
 
 
           <!-- FACEBOOK -->
@@ -957,17 +997,16 @@
           <div
             id="socialConfigurationMessage"
             class="configuration-message hidden"
-          >
-          </div>
+          ></div>
 
         </div>
 
 
-        <!-- STANDALONE APP MESSAGE -->
+        <!-- INSTALLED APP -->
 
         <div
           id="standaloneMessage"
-          class="configuration-message standalone-message hidden"
+          class="configuration-message hidden"
         >
           📱 RYBack is running as an installed app.
           Website social login is hidden in app mode.
@@ -1028,8 +1067,6 @@
         </p>
 
 
-        <!-- ACCOUNT -->
-
         <div class="setting-row">
 
           <div>
@@ -1049,8 +1086,6 @@
 
         </div>
 
-
-        <!-- PROTECTION -->
 
         <div class="setting-row">
 
@@ -1082,8 +1117,6 @@
         </div>
 
 
-        <!-- APP MODE -->
-
         <div class="setting-row">
 
           <div>
@@ -1104,7 +1137,29 @@
         </div>
 
 
-        <!-- LOGOUT -->
+        <div class="setting-row">
+
+          <div>
+
+            <div class="setting-title">
+              Report a problem
+            </div>
+
+            <div class="setting-description">
+              Send a problem report to RYBack.
+            </div>
+
+          </div>
+
+          <button
+            class="report-button"
+            onclick="showScreen('report')"
+          >
+            Report
+          </button>
+
+        </div>
+
 
         <div class="setting-row">
 
@@ -1129,8 +1184,6 @@
 
         </div>
 
-
-        <!-- RESET -->
 
         <div class="setting-row">
 
@@ -1258,7 +1311,92 @@
 
 
   <!-- =========================
-       SECURITY POPUP
+       REPORT
+  ========================== -->
+
+  <section
+    id="report"
+    class="screen"
+  >
+
+    <button
+      class="dark-button"
+      onclick="showScreen('home')"
+    >
+      ← Back
+    </button>
+
+    <div class="center">
+
+      <div class="panel">
+
+        <h2>
+          🚨 Report a Problem
+        </h2>
+
+        <p>
+          Tell us what went wrong.
+        </p>
+
+        <div class="report-note">
+          Please include enough detail so the problem
+          can be understood and reproduced.
+        </div>
+
+
+        <form
+          id="reportForm"
+        >
+
+          <input
+            type="text"
+            name="report_title"
+            placeholder="Report title"
+            maxlength="120"
+            required
+          >
+
+
+          <textarea
+            name="report_description"
+            placeholder="Help description"
+            maxlength="5000"
+            required
+          ></textarea>
+
+
+          <input
+            type="hidden"
+            name="report_user"
+            id="reportUser"
+          >
+
+
+          <button
+            type="submit"
+            class="report-button"
+            style="width:100%;"
+          >
+            🚨 Send Report
+          </button>
+
+        </form>
+
+
+        <div
+          id="reportMessage"
+          class="login-message"
+        ></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       SECURITY MODAL
   ========================== -->
 
   <div
@@ -1294,19 +1432,17 @@
 
 
   <!-- =========================
-       RYBACK JAVASCRIPT
+       JAVASCRIPT
   ========================== -->
 
   <script>
 
     /* =====================================
-       GOOGLE CONFIGURATION
+       CONFIGURATION
     ===================================== */
 
     /*
-      IMPORTANT:
-
-      Replace this with YOUR REAL
+      Replace this with your actual
       Google Web Client ID.
 
       Example format:
@@ -1318,12 +1454,8 @@
       "YOUR-GOOGLE-WEB-CLIENT-ID.apps.googleusercontent.com";
 
 
-    /* =====================================
-       FACEBOOK CONFIGURATION
-    ===================================== */
-
     /*
-      Replace this later with your REAL
+      Replace this later with your real
       Facebook/Meta App ID.
 
       Do NOT put a Facebook App Secret here.
@@ -1331,6 +1463,25 @@
 
     const FACEBOOK_APP_ID =
       "YOUR-FACEBOOK-APP-ID";
+
+
+    /*
+      EmailJS configuration.
+
+      Create these in EmailJS.
+      The receiving email is configured
+      in your EmailJS template/service,
+      not displayed on the RYBack page.
+    */
+
+    const EMAILJS_PUBLIC_KEY =
+      "YOUR-EMAILJS-PUBLIC-KEY";
+
+    const EMAILJS_SERVICE_ID =
+      "YOUR-EMAILJS-SERVICE-ID";
+
+    const EMAILJS_TEMPLATE_ID =
+      "YOUR-EMAILJS-TEMPLATE-ID";
 
 
     /* =====================================
@@ -1350,7 +1501,9 @@
         .querySelectorAll(".screen")
         .forEach(screen => {
 
-          screen.classList.remove("active");
+          screen.classList.remove(
+            "active"
+          );
 
         });
 
@@ -1358,7 +1511,10 @@
         document.getElementById(id);
 
       if (target) {
-        target.classList.add("active");
+
+        target.classList.add(
+          "active"
+        );
       }
 
       closeProfile();
@@ -1377,6 +1533,7 @@
         );
 
       if (panel) {
+
         panel.classList.toggle(
           "hidden"
         );
@@ -1392,6 +1549,7 @@
         );
 
       if (panel) {
+
         panel.classList.add(
           "hidden"
         );
@@ -1426,6 +1584,7 @@
           );
 
         if (saved) {
+
           currentUser =
             JSON.parse(saved);
         }
@@ -1445,7 +1604,7 @@
 
 
     /* =====================================
-       UPDATE UI
+       UI UPDATE
     ===================================== */
 
     function updateUI() {
@@ -1494,10 +1653,8 @@
       if (currentUser) {
 
         /*
-          USER IS LOGGED IN
-
-          Login and Continue as Guest
-          are hidden.
+          Logged in:
+          hide Login + Guest.
         */
 
         loggedOut.classList.add(
@@ -1559,10 +1716,8 @@
       } else {
 
         /*
-          NO USER
-
-          Login and Continue as Guest
-          are visible.
+          Logged out:
+          show Login + Guest.
         */
 
         loggedOut.classList.remove(
@@ -1575,30 +1730,35 @@
 
 
         if (profileName) {
+
           profileName.textContent =
             "Not signed in";
         }
 
 
         if (profileEmail) {
+
           profileEmail.textContent =
             "";
         }
 
 
         if (homeWelcome) {
+
           homeWelcome.textContent =
             "Welcome!";
         }
 
 
         if (homeProvider) {
+
           homeProvider.textContent =
             "";
         }
 
 
         if (settingsAccount) {
+
           settingsAccount.textContent =
             "Not signed in";
         }
@@ -1612,15 +1772,6 @@
     /* =====================================
        EMAIL LOGIN
     ===================================== */
-
-    /*
-      This is a PROTOTYPE login.
-
-      The password is not saved.
-
-      A real production account system
-      needs a backend/database.
-    */
 
     function emailLogin() {
 
@@ -1642,6 +1793,7 @@
 
       if (!emailInput ||
           !passwordInput) {
+
         return;
       }
 
@@ -1669,7 +1821,8 @@
 
 
       /*
-        Create a local prototype session.
+        Prototype-only email session.
+        The password is not saved.
       */
 
       saveUser({
@@ -1682,7 +1835,6 @@
 
         provider:
           "Email"
-
       });
 
 
@@ -1701,7 +1853,8 @@
         showScreen("home");
 
         if (message) {
-          message.textContent = "";
+          message.textContent =
+            "";
         }
 
       }, 500);
@@ -1744,11 +1897,6 @@
       );
 
 
-      /*
-        Prevent Google from automatically
-        selecting the previous account.
-      */
-
       if (
         window.google &&
         window.google.accounts &&
@@ -1756,7 +1904,6 @@
       ) {
 
         google.accounts.id.disableAutoSelect();
-
       }
 
 
@@ -1793,7 +1940,7 @@
 
 
     /* =====================================
-       GOOGLE CONFIGURATION CHECK
+       GOOGLE
     ===================================== */
 
     function isGoogleConfigured() {
@@ -1809,10 +1956,6 @@
       );
     }
 
-
-    /* =====================================
-       GOOGLE LOGIN SETUP
-    ===================================== */
 
     function setupGoogleLogin() {
 
@@ -1845,9 +1988,8 @@
 
 
       /*
-        INSTALLED APP
-
-        Hide Google/Facebook login.
+        Installed app:
+        hide website social login.
       */
 
       if (isStandaloneApp()) {
@@ -1869,6 +2011,7 @@
           );
 
         if (appMode) {
+
           appMode.textContent =
             "Installed app";
         }
@@ -1876,10 +2019,6 @@
         return;
       }
 
-
-      /*
-        WEBSITE
-      */
 
       socialArea.classList.remove(
         "hidden"
@@ -1892,13 +2031,14 @@
         );
 
       if (appMode) {
+
         appMode.textContent =
           "Website";
       }
 
 
       /*
-        No client ID yet.
+        Google Client ID not configured.
       */
 
       if (!isGoogleConfigured()) {
@@ -1910,7 +2050,7 @@
           );
 
           warning.textContent =
-            "Google login is ready, but your real Google Web Client ID has not been added yet.";
+            "Google login needs your Google Web Client ID in GOOGLE_USER_ID.";
         }
 
         return;
@@ -1918,7 +2058,7 @@
 
 
       /*
-        Wait for Google Identity Services.
+        Wait for Google script.
       */
 
       if (
@@ -1937,7 +2077,7 @@
 
 
       /*
-        REAL GOOGLE LOGIN
+        Real Google Identity Services.
       */
 
       google.accounts.id.initialize({
@@ -1956,10 +2096,6 @@
 
       });
 
-
-      /*
-        REAL GOOGLE BUTTON
-      */
 
       google.accounts.id.renderButton(
 
@@ -1989,14 +2125,9 @@
             "left"
 
         }
-
       );
     }
 
-
-    /* =====================================
-       GOOGLE LOGIN RESULT
-    ===================================== */
 
     function handleGoogleCredential(
       response
@@ -2024,12 +2155,10 @@
 
 
         /*
-          Use Google's actual returned
-          account information.
+          Use the actual Google account
+          information.
 
-          NO fake:
-          "Google User"
-          "YouTube User"
+          No fake account names.
         */
 
         saveUser({
@@ -2053,7 +2182,6 @@
           googleSubject:
             payload.sub ||
             ""
-
         });
 
 
@@ -2072,10 +2200,6 @@
       }
     }
 
-
-    /* =====================================
-       GOOGLE TOKEN DECODER
-    ===================================== */
 
     function decodeGoogleToken(token) {
 
@@ -2108,7 +2232,6 @@
 
               (
                 "00" +
-
                 character
                   .charCodeAt(0)
                   .toString(16)
@@ -2155,23 +2278,15 @@
           );
 
           warning.textContent =
-            "Facebook Login is not configured yet. No fake Facebook account will be created.";
+            "Facebook Login is not configured yet.";
         }
 
         return;
       }
 
 
-      /*
-        Real Facebook authentication must
-        be connected to a Meta/Facebook app.
-
-        This prototype deliberately does
-        not invent a Facebook account.
-      */
-
       alert(
-        "Facebook Login needs the real Facebook SDK connected."
+        "Facebook Login is configured, but the Facebook SDK still needs to be connected."
       );
     }
 
@@ -2192,9 +2307,7 @@
     }
 
 
-    function setProtection(
-      enabled
-    ) {
+    function setProtection(enabled) {
 
       localStorage.setItem(
 
@@ -2237,6 +2350,7 @@
 
 
       if (!status) {
+
         return;
       }
 
@@ -2374,6 +2488,200 @@
 
 
     /* =====================================
+       REPORT SYSTEM
+    ===================================== */
+
+    function initializeEmailJS() {
+
+      if (
+        EMAILJS_PUBLIC_KEY.startsWith(
+          "YOUR-"
+        )
+      ) {
+
+        console.log(
+          "EmailJS is not configured yet."
+        );
+
+        return;
+      }
+
+
+      if (
+        window.emailjs
+      ) {
+
+        emailjs.init({
+
+          publicKey:
+            EMAILJS_PUBLIC_KEY
+
+        });
+      }
+    }
+
+
+    function setupReportForm() {
+
+      const reportForm =
+        document.getElementById(
+          "reportForm"
+        );
+
+
+      if (!reportForm) {
+
+        return;
+      }
+
+
+      reportForm.addEventListener(
+        "submit",
+        sendReport
+      );
+    }
+
+
+    function sendReport(event) {
+
+      event.preventDefault();
+
+
+      const form =
+        document.getElementById(
+          "reportForm"
+        );
+
+
+      const message =
+        document.getElementById(
+          "reportMessage"
+        );
+
+
+      const reportUser =
+        document.getElementById(
+          "reportUser"
+        );
+
+
+      /*
+        Include the current RYBack account
+        when available.
+      */
+
+      if (currentUser) {
+
+        reportUser.value =
+          currentUser.email ||
+          currentUser.name ||
+          "Guest";
+
+      } else {
+
+        reportUser.value =
+          "Guest";
+      }
+
+
+      /*
+        Make sure EmailJS has been configured.
+      */
+
+      if (
+        EMAILJS_PUBLIC_KEY.startsWith(
+          "YOUR-"
+        )
+        ||
+        EMAILJS_SERVICE_ID.startsWith(
+          "YOUR-"
+        )
+        ||
+        EMAILJS_TEMPLATE_ID.startsWith(
+          "YOUR-"
+        )
+      ) {
+
+        message.textContent =
+          "⚠️ The report system still needs to be configured.";
+
+        message.style.color =
+          "#f4dc73";
+
+        return;
+      }
+
+
+      if (!window.emailjs) {
+
+        message.textContent =
+          "❌ The report service could not load.";
+
+        message.style.color =
+          "#ff8080";
+
+        return;
+      }
+
+
+      message.textContent =
+        "Sending report...";
+
+      message.style.color =
+        "#ffffff";
+
+
+      emailjs.sendForm(
+
+        EMAILJS_SERVICE_ID,
+
+        EMAILJS_TEMPLATE_ID,
+
+        form
+
+      )
+
+      .then(() => {
+
+        message.textContent =
+          "✅ Report sent successfully!";
+
+        message.style.color =
+          "#72ffad";
+
+
+        form.reset();
+
+
+        setTimeout(() => {
+
+          showScreen("home");
+
+          message.textContent =
+            "";
+
+        }, 1500);
+
+      })
+
+      .catch(error => {
+
+        console.error(
+          "Report sending error:",
+          error
+        );
+
+
+        message.textContent =
+          "❌ The report could not be sent.";
+
+        message.style.color =
+          "#ff8080";
+      });
+    }
+
+
+    /* =====================================
        RESET
     ===================================== */
 
@@ -2386,6 +2694,7 @@
 
 
       if (!confirmed) {
+
         return;
       }
 
@@ -2439,7 +2748,11 @@
 
         updateProtectionUI();
 
+        initializeEmailJS();
+
         setupGoogleLogin();
+
+        setupReportForm();
 
       }
     );
