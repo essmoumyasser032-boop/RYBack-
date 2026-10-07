@@ -1,0 +1,2451 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>RYBack</title>
+
+  <meta
+    name="description"
+    content="RYBack - Apps, protection and account management"
+  >
+
+  <meta
+    name="theme-color"
+    content="#080b12"
+  >
+
+  <link
+    rel="manifest"
+    href="manifest.json"
+  >
+
+  <!-- Google Identity Services -->
+  <script
+    src="https://accounts.google.com/gsi/client"
+    async
+    defer
+  ></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    :root {
+      --background: #05070c;
+      --panel: #10151f;
+      --panel-dark: #0b1018;
+      --border: #2b3546;
+      --text: #ffffff;
+      --muted: #aab3c2;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 13px 20px;
+      font-size: 15px;
+      font-weight: bold;
+      transition: 0.2s ease;
+      margin: 5px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 25px;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* =========================
+       HOME
+    ========================= */
+
+    .home {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .section {
+      min-height: 88vh;
+      border-radius: 28px;
+      padding: 35px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .blue {
+      background:
+        linear-gradient(
+          145deg,
+          #07152f,
+          #0754ff
+        );
+
+      box-shadow:
+        0 0 45px rgba(0, 90, 255, 0.25);
+    }
+
+    .green {
+      background:
+        linear-gradient(
+          145deg,
+          #061d12,
+          #009b4b
+        );
+
+      box-shadow:
+        0 0 45px rgba(0, 255, 100, 0.18);
+    }
+
+    .orange {
+      background:
+        linear-gradient(
+          145deg,
+          #2a1602,
+          #f58b00
+        );
+
+      box-shadow:
+        0 0 45px rgba(255, 140, 0, 0.20);
+    }
+
+    h1 {
+      font-size: 60px;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .main-button {
+      background: white;
+      color: #101010;
+    }
+
+    .dark-button {
+      background: #121824;
+      color: white;
+      border: 1px solid #303a4d;
+    }
+
+    .green-button {
+      background: #0bb75a;
+      color: white;
+    }
+
+    .danger-button {
+      background: #911b22;
+      color: white;
+    }
+
+    /* =========================
+       PROFILE
+    ========================= */
+
+    .profile-button {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 50;
+
+      width: 54px;
+      height: 54px;
+      padding: 0;
+
+      border-radius: 50%;
+
+      background: #111722;
+      color: white;
+
+      border: 1px solid #30394a;
+
+      font-size: 22px;
+    }
+
+    .profile-panel {
+      position: fixed;
+      top: 82px;
+      right: 18px;
+
+      width: 300px;
+
+      z-index: 100;
+
+      background: #0c111a;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 18px 60px rgba(0, 0, 0, 0.55);
+    }
+
+    .profile-name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .profile-email {
+      margin-top: 5px;
+      margin-bottom: 15px;
+
+      color: #8f9aab;
+
+      font-size: 13px;
+
+      word-break: break-word;
+    }
+
+    /* =========================
+       HOME LOGIN AREAS
+    ========================= */
+
+    .auth-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .welcome {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .provider {
+      color: #c8d1df;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    /* =========================
+       PANELS
+    ========================= */
+
+    .center {
+      width: min(520px, 100%);
+      margin: 45px auto;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+
+      padding: 28px;
+
+      box-shadow:
+        0 18px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel h2 {
+      text-align: center;
+    }
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+
+      padding: 14px;
+      margin: 7px 0;
+
+      border-radius: 11px;
+
+      background: #070a11;
+      color: white;
+
+      border: 1px solid #303a4a;
+
+      outline: none;
+
+      font-size: 15px;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: #4a8cff;
+
+      box-shadow:
+        0 0 0 3px rgba(74, 140, 255, 0.1);
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      margin: 20px 0;
+
+      color: #727d8f;
+      font-size: 13px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #252d3a;
+    }
+
+    .google-area {
+      min-height: 44px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-message {
+      text-align: center;
+      min-height: 20px;
+
+      margin-top: 10px;
+
+      font-size: 14px;
+    }
+
+    .configuration-message {
+      margin-top: 12px;
+
+      padding: 12px;
+
+      border-radius: 10px;
+
+      background: #25200c;
+      border: 1px solid #725e16;
+
+      color: #f4dc73;
+
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .standalone-message {
+      margin-top: 18px;
+    }
+
+    /* =========================
+       SETTINGS
+    ========================= */
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 15px;
+
+      padding: 17px 0;
+
+      border-bottom: 1px solid #202836;
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-title {
+      font-weight: bold;
+    }
+
+    .setting-description {
+      margin-top: 4px;
+
+      color: #8994a6;
+
+      font-size: 13px;
+    }
+
+    /* Toggle */
+
+    .toggle {
+      position: relative;
+
+      width: 58px;
+      height: 32px;
+
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+
+      background: #2a3240;
+
+      border-radius: 40px;
+
+      transition: 0.2s;
+
+      cursor: pointer;
+    }
+
+    .slider::before {
+      content: "";
+
+      position: absolute;
+
+      width: 24px;
+      height: 24px;
+
+      left: 4px;
+      top: 4px;
+
+      background: white;
+
+      border-radius: 50%;
+
+      transition: 0.2s;
+    }
+
+    .toggle input:checked + .slider {
+      background: #10b95c;
+
+      box-shadow:
+        0 0 20px rgba(0, 255, 110, 0.35);
+    }
+
+    .toggle input:checked + .slider::before {
+      transform: translateX(26px);
+    }
+
+    /* =========================
+       SECURITY
+    ========================= */
+
+    .security-card {
+      width: 100%;
+
+      margin-top: 15px;
+      padding: 18px;
+
+      border-radius: 16px;
+
+      background: rgba(0, 0, 0, 0.22);
+
+      text-align: left;
+    }
+
+    .security-status {
+      margin-top: 12px;
+
+      padding: 12px;
+
+      border-radius: 11px;
+
+      font-weight: bold;
+    }
+
+    .status-off {
+      background: #242b37;
+    }
+
+    .status-safe {
+      background: #087b3d;
+
+      box-shadow:
+        0 0 20px rgba(0, 255, 100, 0.22);
+    }
+
+    .status-warning {
+      background: #926f00;
+
+      box-shadow:
+        0 0 20px rgba(255, 190, 0, 0.25);
+    }
+
+    /* =========================
+       APPS
+    ========================= */
+
+    .app-card {
+      margin: 10px 0;
+
+      padding: 18px;
+
+      border-radius: 14px;
+
+      border: 1px solid #2a3342;
+
+      background: #111722;
+    }
+
+    .app-card strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    /* =========================
+       MODAL
+    ========================= */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+
+      z-index: 999;
+
+      display: none;
+
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(0, 0, 0, 0.78);
+
+      padding: 20px;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(440px, 100%);
+
+      background: #101620;
+
+      border: 1px solid #30394a;
+
+      border-radius: 20px;
+
+      padding: 30px;
+
+      text-align: center;
+
+      box-shadow:
+        0 20px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    .modal-icon {
+      font-size: 56px;
+
+      margin-bottom: 14px;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 900px) {
+      .home {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        min-height: 45vh;
+      }
+
+      h1 {
+        font-size: 45px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .screen {
+        padding: 15px;
+      }
+
+      .section {
+        padding: 25px 18px;
+      }
+
+      .panel {
+        padding: 20px;
+      }
+
+      .profile-panel {
+        width: calc(100vw - 36px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       PROFILE BUTTON
+  ========================== -->
+
+  <button
+    class="profile-button"
+    id="profileButton"
+    onclick="toggleProfile()"
+    aria-label="Open profile"
+  >
+    👤
+  </button>
+
+
+  <!-- =========================
+       PROFILE PANEL
+  ========================== -->
+
+  <div
+    class="profile-panel hidden"
+    id="profilePanel"
+  >
+
+    <h3>
+      RYBack Profile
+    </h3>
+
+    <div
+      class="profile-name"
+      id="profileName"
+    >
+      Not signed in
+    </div>
+
+    <div
+      class="profile-email"
+      id="profileEmail"
+    >
+    </div>
+
+    <div class="stack">
+
+      <button
+        class="dark-button"
+        onclick="showScreen('settings')"
+      >
+        ⚙️ Settings
+      </button>
+
+      <button
+        class="danger-button"
+        onclick="logout()"
+      >
+        Log out
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       HOME
+  ========================== -->
+
+  <main
+    id="home"
+    class="screen active"
+  >
+
+    <div class="home">
+
+      <!-- BLUE -->
+      <section class="section blue">
+
+        <h1>
+          RYBack
+        </h1>
+
+        <p>
+          Apps, protection and your account —
+          all in one place.
+        </p>
+
+
+        <!-- LOGGED OUT -->
+        <div
+          id="homeLoggedOut"
+          class="auth-area"
+        >
+
+          <button
+            class="main-button"
+            onclick="showScreen('login')"
+          >
+            🔐 Login
+          </button>
+
+          <button
+            class="dark-button"
+            onclick="continueAsGuest()"
+          >
+            👤 Continue as Guest
+          </button>
+
+        </div>
+
+
+        <!-- LOGGED IN -->
+        <div
+          id="homeLoggedIn"
+          class="auth-area hidden"
+        >
+
+          <div
+            class="welcome"
+            id="homeWelcome"
+          >
+            Welcome!
+          </div>
+
+          <div
+            class="provider"
+            id="homeProvider"
+          >
+          </div>
+
+          <button
+            class="main-button"
+            onclick="showScreen('settings')"
+          >
+            ⚙️ Settings
+          </button>
+
+          <button
+            class="dark-button"
+            onclick="logout()"
+          >
+            Log out
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- GREEN -->
+      <section class="section green">
+
+        <h2>
+          🛡️ RYBack Protection
+        </h2>
+
+        <p>
+          Control RYBack protection from your
+          settings or test it here.
+        </p>
+
+        <div class="security-card">
+
+          <strong>
+            Anti-Protection
+          </strong>
+
+          <div
+            id="securityStatus"
+            class="security-status status-off"
+          >
+            Protection is OFF
+          </div>
+
+          <button
+            class="green-button"
+            onclick="toggleProtectionFromHome()"
+          >
+            Toggle Protection
+          </button>
+
+          <button
+            class="dark-button"
+            onclick="simulateThreat()"
+          >
+            Test Detection
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- ORANGE -->
+      <section class="section orange">
+
+        <h2>
+          🚀 RYBack Apps
+        </h2>
+
+        <p>
+          Explore the RYBack app ecosystem.
+        </p>
+
+        <button
+          class="main-button"
+          onclick="showScreen('apps')"
+        >
+          Open Apps
+        </button>
+
+        <button
+          class="dark-button"
+          onclick="showScreen('settings')"
+        >
+          ⚙️ Settings
+        </button>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- =========================
+       LOGIN
+  ========================== -->
+
+  <section
+    id="login"
+    class="screen"
+  >
+
+    <button
+      class="dark-button"
+      onclick="showScreen('home')"
+    >
+      ← Back
+    </button>
+
+    <div class="center">
+
+      <div class="panel">
+
+        <h2>
+          Login to RYBack
+        </h2>
+
+        <p style="text-align:center;">
+          Choose how you want to sign in.
+        </p>
+
+
+        <!-- EMAIL LOGIN -->
+
+        <div class="stack">
+
+          <input
+            id="email"
+            type="email"
+            placeholder="Email"
+            autocomplete="email"
+          >
+
+          <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            autocomplete="current-password"
+          >
+
+          <button
+            class="main-button"
+            onclick="emailLogin()"
+          >
+            Login with Email
+          </button>
+
+        </div>
+
+
+        <div
+          id="loginMessage"
+          class="login-message"
+        >
+        </div>
+
+
+        <!-- WEBSITE SOCIAL LOGIN -->
+
+        <div
+          id="websiteSocialLogin"
+        >
+
+          <div class="divider">
+            OR
+          </div>
+
+          <div
+            style="
+              text-align:center;
+              font-weight:bold;
+              margin-bottom:12px;
+            "
+          >
+            Continue with Google
+          </div>
+
+
+          <!-- REAL GOOGLE BUTTON -->
+
+          <div
+            id="googleSignInButton"
+            class="google-area"
+          >
+          </div>
+
+
+          <!-- FACEBOOK -->
+
+          <button
+            class="dark-button"
+            style="width:100%;"
+            onclick="facebookLogin()"
+          >
+            Continue with Facebook
+          </button>
+
+
+          <div
+            id="socialConfigurationMessage"
+            class="configuration-message hidden"
+          >
+          </div>
+
+        </div>
+
+
+        <!-- STANDALONE APP MESSAGE -->
+
+        <div
+          id="standaloneMessage"
+          class="configuration-message standalone-message hidden"
+        >
+          📱 RYBack is running as an installed app.
+          Website social login is hidden in app mode.
+        </div>
+
+
+        <!-- GUEST -->
+
+        <div
+          style="
+            margin-top:20px;
+            text-align:center;
+          "
+        >
+
+          <button
+            class="dark-button"
+            onclick="continueAsGuest()"
+          >
+            Continue as Guest
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       SETTINGS
+  ========================== -->
+
+  <section
+    id="settings"
+    class="screen"
+  >
+
+    <button
+      class="dark-button"
+      onclick="showScreen('home')"
+    >
+      ← Back
+    </button>
+
+    <div class="center">
+
+      <div class="panel">
+
+        <h2>
+          ⚙️ Settings
+        </h2>
+
+        <p style="text-align:center;">
+          Control your RYBack experience.
+        </p>
+
+
+        <!-- ACCOUNT -->
+
+        <div class="setting-row">
+
+          <div>
+
+            <div class="setting-title">
+              Account
+            </div>
+
+            <div
+              id="settingsAccount"
+              class="setting-description"
+            >
+              Not signed in
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PROTECTION -->
+
+        <div class="setting-row">
+
+          <div>
+
+            <div class="setting-title">
+              🛡️ RYBack Protection
+            </div>
+
+            <div class="setting-description">
+              Detect suspicious apps in the prototype.
+            </div>
+
+          </div>
+
+
+          <label class="toggle">
+
+            <input
+              id="protectionToggle"
+              type="checkbox"
+              onchange="setProtection(this.checked)"
+            >
+
+            <span class="slider"></span>
+
+          </label>
+
+        </div>
+
+
+        <!-- APP MODE -->
+
+        <div class="setting-row">
+
+          <div>
+
+            <div class="setting-title">
+              App mode
+            </div>
+
+            <div
+              id="appModeText"
+              class="setting-description"
+            >
+              Website
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- LOGOUT -->
+
+        <div class="setting-row">
+
+          <div>
+
+            <div class="setting-title">
+              Account session
+            </div>
+
+            <div class="setting-description">
+              Sign out of this browser/device.
+            </div>
+
+          </div>
+
+          <button
+            class="danger-button"
+            onclick="logout()"
+          >
+            Log out
+          </button>
+
+        </div>
+
+
+        <!-- RESET -->
+
+        <div class="setting-row">
+
+          <div>
+
+            <div class="setting-title">
+              Reset RYBack
+            </div>
+
+            <div class="setting-description">
+              Clear saved account and settings.
+            </div>
+
+          </div>
+
+          <button
+            class="dark-button"
+            onclick="resetRyback()"
+          >
+            Reset
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       APPS
+  ========================== -->
+
+  <section
+    id="apps"
+    class="screen"
+  >
+
+    <button
+      class="dark-button"
+      onclick="showScreen('home')"
+    >
+      ← Back
+    </button>
+
+    <div class="center">
+
+      <div class="panel">
+
+        <h2>
+          🚀 RYBack Apps
+        </h2>
+
+        <p>
+          This is the RYBack application area.
+        </p>
+
+
+        <div class="app-card">
+
+          <strong>
+            🌐 RYBack Browser
+          </strong>
+
+          <p>
+            RYBack's browser concept.
+          </p>
+
+          <button
+            class="main-button"
+            onclick="openPrototype('RYBack Browser')"
+          >
+            Open
+          </button>
+
+        </div>
+
+
+        <div class="app-card">
+
+          <strong>
+            🛡️ RYBack Security
+          </strong>
+
+          <p>
+            Security and protection tools.
+          </p>
+
+          <button
+            class="main-button"
+            onclick="openPrototype('RYBack Security')"
+          >
+            Open
+          </button>
+
+        </div>
+
+
+        <div class="app-card">
+
+          <strong>
+            🛒 RYBack Store
+          </strong>
+
+          <p>
+            The future RYBack app store.
+          </p>
+
+          <button
+            class="main-button"
+            onclick="openPrototype('RYBack Store')"
+          >
+            Open
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       SECURITY POPUP
+  ========================== -->
+
+  <div
+    id="securityModal"
+    class="modal"
+  >
+
+    <div class="modal-box">
+
+      <div class="modal-icon">
+        ❌
+      </div>
+
+      <h2>
+        RYBack protected you
+      </h2>
+
+      <p>
+        RYBack detected a dangerous app in
+        this simulation and blocked it.
+      </p>
+
+      <button
+        class="main-button"
+        onclick="closeSecurityModal()"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       RYBACK JAVASCRIPT
+  ========================== -->
+
+  <script>
+
+    /* =====================================
+       GOOGLE CONFIGURATION
+    ===================================== */
+
+    /*
+      IMPORTANT:
+
+      Replace this with YOUR REAL
+      Google Web Client ID.
+
+      Example format:
+
+      123456789012-abcdef.apps.googleusercontent.com
+    */
+
+    const GOOGLE_USER_ID =
+      "YOUR-GOOGLE-WEB-CLIENT-ID.apps.googleusercontent.com";
+
+
+    /* =====================================
+       FACEBOOK CONFIGURATION
+    ===================================== */
+
+    /*
+      Replace this later with your REAL
+      Facebook/Meta App ID.
+
+      Do NOT put a Facebook App Secret here.
+    */
+
+    const FACEBOOK_APP_ID =
+      "YOUR-FACEBOOK-APP-ID";
+
+
+    /* =====================================
+       STATE
+    ===================================== */
+
+    let currentUser = null;
+
+
+    /* =====================================
+       SCREEN MANAGEMENT
+    ===================================== */
+
+    function showScreen(id) {
+
+      document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+          screen.classList.remove("active");
+
+        });
+
+      const target =
+        document.getElementById(id);
+
+      if (target) {
+        target.classList.add("active");
+      }
+
+      closeProfile();
+    }
+
+
+    /* =====================================
+       PROFILE
+    ===================================== */
+
+    function toggleProfile() {
+
+      const panel =
+        document.getElementById(
+          "profilePanel"
+        );
+
+      if (panel) {
+        panel.classList.toggle(
+          "hidden"
+        );
+      }
+    }
+
+
+    function closeProfile() {
+
+      const panel =
+        document.getElementById(
+          "profilePanel"
+        );
+
+      if (panel) {
+        panel.classList.add(
+          "hidden"
+        );
+      }
+    }
+
+
+    /* =====================================
+       USER STORAGE
+    ===================================== */
+
+    function saveUser(user) {
+
+      currentUser = user;
+
+      localStorage.setItem(
+        "rybackUser",
+        JSON.stringify(user)
+      );
+
+      updateUI();
+    }
+
+
+    function loadUser() {
+
+      try {
+
+        const saved =
+          localStorage.getItem(
+            "rybackUser"
+          );
+
+        if (saved) {
+          currentUser =
+            JSON.parse(saved);
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Could not load RYBack user:",
+          error
+        );
+
+        currentUser = null;
+      }
+
+      updateUI();
+    }
+
+
+    /* =====================================
+       UPDATE UI
+    ===================================== */
+
+    function updateUI() {
+
+      const loggedOut =
+        document.getElementById(
+          "homeLoggedOut"
+        );
+
+      const loggedIn =
+        document.getElementById(
+          "homeLoggedIn"
+        );
+
+      const profileName =
+        document.getElementById(
+          "profileName"
+        );
+
+      const profileEmail =
+        document.getElementById(
+          "profileEmail"
+        );
+
+      const homeWelcome =
+        document.getElementById(
+          "homeWelcome"
+        );
+
+      const homeProvider =
+        document.getElementById(
+          "homeProvider"
+        );
+
+      const settingsAccount =
+        document.getElementById(
+          "settingsAccount"
+        );
+
+
+      if (!loggedOut || !loggedIn) {
+        return;
+      }
+
+
+      if (currentUser) {
+
+        /*
+          USER IS LOGGED IN
+
+          Login and Continue as Guest
+          are hidden.
+        */
+
+        loggedOut.classList.add(
+          "hidden"
+        );
+
+        loggedIn.classList.remove(
+          "hidden"
+        );
+
+
+        if (profileName) {
+
+          profileName.textContent =
+            currentUser.name ||
+            "RYBack User";
+        }
+
+
+        if (profileEmail) {
+
+          profileEmail.textContent =
+            currentUser.email ||
+            "";
+        }
+
+
+        if (homeWelcome) {
+
+          homeWelcome.textContent =
+            "Welcome, " +
+            (
+              currentUser.name ||
+              currentUser.email ||
+              "RYBack User"
+            ) +
+            "! 👋";
+        }
+
+
+        if (homeProvider) {
+
+          homeProvider.textContent =
+            currentUser.provider
+              ? "Signed in with " +
+                currentUser.provider
+              : "Signed in";
+        }
+
+
+        if (settingsAccount) {
+
+          settingsAccount.textContent =
+            currentUser.email ||
+            currentUser.name ||
+            "Signed in";
+        }
+
+      } else {
+
+        /*
+          NO USER
+
+          Login and Continue as Guest
+          are visible.
+        */
+
+        loggedOut.classList.remove(
+          "hidden"
+        );
+
+        loggedIn.classList.add(
+          "hidden"
+        );
+
+
+        if (profileName) {
+          profileName.textContent =
+            "Not signed in";
+        }
+
+
+        if (profileEmail) {
+          profileEmail.textContent =
+            "";
+        }
+
+
+        if (homeWelcome) {
+          homeWelcome.textContent =
+            "Welcome!";
+        }
+
+
+        if (homeProvider) {
+          homeProvider.textContent =
+            "";
+        }
+
+
+        if (settingsAccount) {
+          settingsAccount.textContent =
+            "Not signed in";
+        }
+      }
+
+
+      updateProtectionUI();
+    }
+
+
+    /* =====================================
+       EMAIL LOGIN
+    ===================================== */
+
+    /*
+      This is a PROTOTYPE login.
+
+      The password is not saved.
+
+      A real production account system
+      needs a backend/database.
+    */
+
+    function emailLogin() {
+
+      const emailInput =
+        document.getElementById(
+          "email"
+        );
+
+      const passwordInput =
+        document.getElementById(
+          "password"
+        );
+
+      const message =
+        document.getElementById(
+          "loginMessage"
+        );
+
+
+      if (!emailInput ||
+          !passwordInput) {
+        return;
+      }
+
+
+      const email =
+        emailInput.value.trim();
+
+      const password =
+        passwordInput.value;
+
+
+      if (!email || !password) {
+
+        if (message) {
+
+          message.textContent =
+            "Enter your email and password.";
+
+          message.style.color =
+            "#ff9090";
+        }
+
+        return;
+      }
+
+
+      /*
+        Create a local prototype session.
+      */
+
+      saveUser({
+
+        name:
+          email.split("@")[0],
+
+        email:
+          email,
+
+        provider:
+          "Email"
+
+      });
+
+
+      if (message) {
+
+        message.textContent =
+          "Logged in successfully. ✅";
+
+        message.style.color =
+          "#72ffad";
+      }
+
+
+      setTimeout(() => {
+
+        showScreen("home");
+
+        if (message) {
+          message.textContent = "";
+        }
+
+      }, 500);
+    }
+
+
+    /* =====================================
+       GUEST
+    ===================================== */
+
+    function continueAsGuest() {
+
+      saveUser({
+
+        name:
+          "Guest",
+
+        email:
+          "",
+
+        provider:
+          "Guest"
+
+      });
+
+      showScreen("home");
+    }
+
+
+    /* =====================================
+       LOGOUT
+    ===================================== */
+
+    function logout() {
+
+      currentUser = null;
+
+      localStorage.removeItem(
+        "rybackUser"
+      );
+
+
+      /*
+        Prevent Google from automatically
+        selecting the previous account.
+      */
+
+      if (
+        window.google &&
+        window.google.accounts &&
+        window.google.accounts.id
+      ) {
+
+        google.accounts.id.disableAutoSelect();
+
+      }
+
+
+      updateUI();
+
+      showScreen("home");
+    }
+
+
+    /* =====================================
+       APP MODE
+    ===================================== */
+
+    function isStandaloneApp() {
+
+      return (
+
+        window.matchMedia(
+          "(display-mode: standalone)"
+        ).matches
+
+        ||
+
+        window.navigator.standalone === true
+
+        ||
+
+        document.referrer.startsWith(
+          "android-app://"
+        )
+
+      );
+    }
+
+
+    /* =====================================
+       GOOGLE CONFIGURATION CHECK
+    ===================================== */
+
+    function isGoogleConfigured() {
+
+      return (
+
+        GOOGLE_USER_ID &&
+
+        !GOOGLE_USER_ID.startsWith(
+          "YOUR-GOOGLE"
+        )
+
+      );
+    }
+
+
+    /* =====================================
+       GOOGLE LOGIN SETUP
+    ===================================== */
+
+    function setupGoogleLogin() {
+
+      const socialArea =
+        document.getElementById(
+          "websiteSocialLogin"
+        );
+
+      const standaloneMessage =
+        document.getElementById(
+          "standaloneMessage"
+        );
+
+      const googleButton =
+        document.getElementById(
+          "googleSignInButton"
+        );
+
+      const warning =
+        document.getElementById(
+          "socialConfigurationMessage"
+        );
+
+
+      if (!socialArea ||
+          !googleButton) {
+
+        return;
+      }
+
+
+      /*
+        INSTALLED APP
+
+        Hide Google/Facebook login.
+      */
+
+      if (isStandaloneApp()) {
+
+        socialArea.classList.add(
+          "hidden"
+        );
+
+        if (standaloneMessage) {
+
+          standaloneMessage.classList.remove(
+            "hidden"
+          );
+        }
+
+        const appMode =
+          document.getElementById(
+            "appModeText"
+          );
+
+        if (appMode) {
+          appMode.textContent =
+            "Installed app";
+        }
+
+        return;
+      }
+
+
+      /*
+        WEBSITE
+      */
+
+      socialArea.classList.remove(
+        "hidden"
+      );
+
+
+      const appMode =
+        document.getElementById(
+          "appModeText"
+        );
+
+      if (appMode) {
+        appMode.textContent =
+          "Website";
+      }
+
+
+      /*
+        No client ID yet.
+      */
+
+      if (!isGoogleConfigured()) {
+
+        if (warning) {
+
+          warning.classList.remove(
+            "hidden"
+          );
+
+          warning.textContent =
+            "Google login is ready, but your real Google Web Client ID has not been added yet.";
+        }
+
+        return;
+      }
+
+
+      /*
+        Wait for Google Identity Services.
+      */
+
+      if (
+        !window.google ||
+        !window.google.accounts ||
+        !window.google.accounts.id
+      ) {
+
+        setTimeout(
+          setupGoogleLogin,
+          500
+        );
+
+        return;
+      }
+
+
+      /*
+        REAL GOOGLE LOGIN
+      */
+
+      google.accounts.id.initialize({
+
+        client_id:
+          GOOGLE_USER_ID,
+
+        callback:
+          handleGoogleCredential,
+
+        auto_select:
+          false,
+
+        cancel_on_tap_outside:
+          true
+
+      });
+
+
+      /*
+        REAL GOOGLE BUTTON
+      */
+
+      google.accounts.id.renderButton(
+
+        googleButton,
+
+        {
+
+          theme:
+            "outline",
+
+          size:
+            "large",
+
+          type:
+            "standard",
+
+          text:
+            "continue_with",
+
+          shape:
+            "rectangular",
+
+          width:
+            360,
+
+          logo_alignment:
+            "left"
+
+        }
+
+      );
+    }
+
+
+    /* =====================================
+       GOOGLE LOGIN RESULT
+    ===================================== */
+
+    function handleGoogleCredential(
+      response
+    ) {
+
+      if (
+        !response ||
+        !response.credential
+      ) {
+
+        console.error(
+          "Google did not return a credential."
+        );
+
+        return;
+      }
+
+
+      try {
+
+        const payload =
+          decodeGoogleToken(
+            response.credential
+          );
+
+
+        /*
+          Use Google's actual returned
+          account information.
+
+          NO fake:
+          "Google User"
+          "YouTube User"
+        */
+
+        saveUser({
+
+          name:
+            payload.name ||
+            payload.given_name ||
+            "",
+
+          email:
+            payload.email ||
+            "",
+
+          provider:
+            "Google",
+
+          picture:
+            payload.picture ||
+            "",
+
+          googleSubject:
+            payload.sub ||
+            ""
+
+        });
+
+
+        showScreen("home");
+
+      } catch (error) {
+
+        console.error(
+          "Google login failed:",
+          error
+        );
+
+        alert(
+          "Google login could not be completed."
+        );
+      }
+    }
+
+
+    /* =====================================
+       GOOGLE TOKEN DECODER
+    ===================================== */
+
+    function decodeGoogleToken(token) {
+
+      const parts =
+        token.split(".");
+
+
+      if (parts.length !== 3) {
+
+        throw new Error(
+          "Invalid Google token."
+        );
+      }
+
+
+      const base64 =
+        parts[1]
+          .replace(/-/g, "+")
+          .replace(/_/g, "/");
+
+
+      const json =
+        decodeURIComponent(
+
+          atob(base64)
+            .split("")
+            .map(character =>
+
+              "%" +
+
+              (
+                "00" +
+
+                character
+                  .charCodeAt(0)
+                  .toString(16)
+
+              ).slice(-2)
+
+            )
+            .join("")
+
+        );
+
+
+      return JSON.parse(json);
+    }
+
+
+    /* =====================================
+       FACEBOOK
+    ===================================== */
+
+    function facebookLogin() {
+
+      const warning =
+        document.getElementById(
+          "socialConfigurationMessage"
+        );
+
+
+      /*
+        Never create a fake Facebook user.
+      */
+
+      if (
+        !FACEBOOK_APP_ID ||
+        FACEBOOK_APP_ID.startsWith(
+          "YOUR-FACEBOOK"
+        )
+      ) {
+
+        if (warning) {
+
+          warning.classList.remove(
+            "hidden"
+          );
+
+          warning.textContent =
+            "Facebook Login is not configured yet. No fake Facebook account will be created.";
+        }
+
+        return;
+      }
+
+
+      /*
+        Real Facebook authentication must
+        be connected to a Meta/Facebook app.
+
+        This prototype deliberately does
+        not invent a Facebook account.
+      */
+
+      alert(
+        "Facebook Login needs the real Facebook SDK connected."
+      );
+    }
+
+
+    /* =====================================
+       PROTECTION
+    ===================================== */
+
+    function getProtection() {
+
+      return (
+
+        localStorage.getItem(
+          "rybackProtection"
+        ) === "on"
+
+      );
+    }
+
+
+    function setProtection(
+      enabled
+    ) {
+
+      localStorage.setItem(
+
+        "rybackProtection",
+
+        enabled
+          ? "on"
+          : "off"
+
+      );
+
+      updateProtectionUI();
+    }
+
+
+    function toggleProtectionFromHome() {
+
+      setProtection(
+        !getProtection()
+      );
+    }
+
+
+    function updateProtectionUI() {
+
+      const enabled =
+        getProtection();
+
+
+      const status =
+        document.getElementById(
+          "securityStatus"
+        );
+
+
+      const toggle =
+        document.getElementById(
+          "protectionToggle"
+        );
+
+
+      if (!status) {
+        return;
+      }
+
+
+      if (toggle) {
+
+        toggle.checked =
+          enabled;
+      }
+
+
+      if (enabled) {
+
+        status.className =
+          "security-status status-safe";
+
+        status.textContent =
+          "✅ RYBack Protection is ON";
+
+      } else {
+
+        status.className =
+          "security-status status-off";
+
+        status.textContent =
+          "Protection is OFF";
+      }
+    }
+
+
+    /* =====================================
+       SECURITY TEST
+    ===================================== */
+
+    function simulateThreat() {
+
+      if (!getProtection()) {
+
+        const status =
+          document.getElementById(
+            "securityStatus"
+          );
+
+
+        if (status) {
+
+          status.className =
+            "security-status status-warning";
+
+          status.textContent =
+            "⚠️ Turn Protection ON first.";
+        }
+
+        return;
+      }
+
+
+      const status =
+        document.getElementById(
+          "securityStatus"
+        );
+
+
+      if (status) {
+
+        status.className =
+          "security-status status-warning";
+
+        status.textContent =
+          "⚠️ Threat detected!";
+      }
+
+
+      const modal =
+        document.getElementById(
+          "securityModal"
+        );
+
+
+      if (modal) {
+
+        modal.classList.add(
+          "show"
+        );
+      }
+
+
+      setTimeout(() => {
+
+        if (
+          modal &&
+          modal.classList.contains(
+            "show"
+          )
+        ) {
+
+          closeSecurityModal();
+        }
+
+      }, 5000);
+    }
+
+
+    function closeSecurityModal() {
+
+      const modal =
+        document.getElementById(
+          "securityModal"
+        );
+
+
+      if (modal) {
+
+        modal.classList.remove(
+          "show"
+        );
+      }
+
+
+      const status =
+        document.getElementById(
+          "securityStatus"
+        );
+
+
+      if (status) {
+
+        status.className =
+          "security-status status-safe";
+
+        status.textContent =
+          "✅ Threat blocked";
+      }
+    }
+
+
+    /* =====================================
+       RESET
+    ===================================== */
+
+    function resetRyback() {
+
+      const confirmed =
+        confirm(
+          "Reset RYBack account and settings?"
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      localStorage.removeItem(
+        "rybackUser"
+      );
+
+
+      localStorage.removeItem(
+        "rybackProtection"
+      );
+
+
+      currentUser = null;
+
+
+      updateUI();
+
+      showScreen("home");
+
+
+      alert(
+        "RYBack has been reset. ✅"
+      );
+    }
+
+
+    /* =====================================
+       APP PROTOTYPES
+    ===================================== */
+
+    function openPrototype(name) {
+
+      alert(
+        name +
+        " is part of the RYBack prototype. 🚀"
+      );
+    }
+
+
+    /* =====================================
+       STARTUP
+    ===================================== */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        loadUser();
+
+        updateProtectionUI();
+
+        setupGoogleLogin();
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
+```
